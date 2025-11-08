@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Instagram NotFollow</title>
+    <title>Instagram Unfollow Checker</title>
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.6/base.min.css"
       rel="stylesheet"
@@ -12,7 +12,7 @@
       href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css"
       rel="stylesheet"
     />
-    <link rel="icon" type="image/x-icon" href="https://syafa.tech/fav.png" />
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/xxgbrl/unfollow/main/fav.png" />
     <style>
       html,
       body {
@@ -36,7 +36,7 @@
   >
     <div class="container mx-auto p-6 flex-grow">
       <div class="flex justify-between items-center mb-4">
-        <h1 class="text-2xl font-bold mb-4">Instagram NotFollow</h1>
+        <h1 class="text-2xl font-bold mb-4">Instagram Unfollow Checker</h1>
         <button
           id="theme-toggle"
           type="button"
@@ -151,12 +151,19 @@
         class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between"
       >
         <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400"
-          >Copyright © 2024 by
+          >Copyright &copy; 2025 by
           <a
             href="https://github.com/gvoze32"
             target="_blank"
             class="font-semibold hover:underline"
             >gvoze32</a
+          >
+          &mdash; Edited by
+          <a
+            href="https://www.instagram.com/gabriel.dim"
+            target="_blank"
+            class="font-semibold hover:underline"
+            >gabriel.dim</a
           >
         </span>
         <ul
@@ -179,7 +186,7 @@
               ></path>
             </svg>
             <span
-              >Support with Ethereum:
+              >Support gvoze32 with Ethereum:
               0x98441fC52b473d2E8B246315F96701484e6353CC</span
             >
           </li>
@@ -240,25 +247,23 @@
                 permissions".
               </li>
               <li>
-                Click "Download your information", then click "Download or
-                transfer information".
+                Click "Export your information", then click "Create export".
               </li>
               <li>
                 Select the profiles you’d like to download information from.
               </li>
-              <li>Click "Next", then select "Some of your information".</li>
-              <li>Choose "Followers and Following" and click "Next".</li>
-              <li>Select "Download to device".</li>
+              <li>Click "Export to device".</li>
               <li>
                 Choose the file options:
                 <ul class="list-disc list-inside pl-5 space-y-1">
-                  <li>Date range: All time</li>
                   <li>Notify: Your email address</li>
+                  <li>Customize information: Followers and Following</li>
+                  <li>Date range: All time</li>
                   <li>Format: JSON</li>
-                  <li>Media quality: Low</li>
+                  <li>Media quality: Lower quality</li>
                 </ul>
               </li>
-              <li>Click "Create files".</li>
+              <li>Click "Start export".</li>
               <li>
                 Once you receive the download completion email, click the link
                 to download the ZIP file.
@@ -290,97 +295,72 @@
       let followersData = [];
       let followingData = [];
 
-      document
-        .getElementById("followersFile")
-        .addEventListener("change", function (event) {
-          const files = event.target.files;
-          for (const file of files) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-              try {
-                const parsedData = JSON.parse(event.target.result);
-                followersData.push(parsedData);
-                console.log("Followers Data:", followersData);
-                document.getElementById("error-message").textContent = "";
-              } catch (error) {
-                console.error("Error parsing followers file:", error);
-                document.getElementById("error-message").textContent =
-                  "Error parsing followers file. Please make sure it is in the correct format.";
-              }
-            };
-            reader.readAsText(file);
-          }
-        });
+      // Load multiple followers files
+document.getElementById("followersFile").addEventListener("change", e => {
+  const files = e.target.files;
+  followersData = [];
+  for (const file of files) {
+    const reader = new FileReader();
+    reader.onload = evt => {
+      try {
+        const parsed = JSON.parse(evt.target.result);
+        if(Array.isArray(parsed)) followersData.push(...parsed);
+        document.getElementById("error-message").textContent = "";
+      } catch(err){
+        console.error(err);
+        document.getElementById("error-message").textContent = "Error parsing followers.json";
+      }
+    };
+    reader.readAsText(file);
+  }
+});
 
-      document
-        .getElementById("followingFile")
-        .addEventListener("change", function (event) {
-          const files = event.target.files;
-          for (const file of files) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-              try {
-                const parsedData = JSON.parse(event.target.result);
-                followingData.push(parsedData);
-                console.log("Following Data:", followingData);
-                document.getElementById("error-message").textContent = "";
-              } catch (error) {
-                console.error("Error parsing following file:", error);
-                document.getElementById("error-message").textContent =
-                  "Error parsing following file. Please make sure it is in the correct format.";
-              }
-            };
-            reader.readAsText(file);
-          }
-        });
-
-      function processFiles() {
-        if (!followersData.length || !followingData.length) {
-          document.getElementById("error-message").textContent =
-            "Invalid JSON format. Please upload valid files.";
-          console.error("Invalid JSON format:", {
-            followersData,
-            followingData,
-          });
-          return;
+// Load multiple following files
+document.getElementById("followingFile").addEventListener("change", e => {
+  const files = e.target.files;
+  followingData = { relationships_following: [] };
+  for (const file of files) {
+    const reader = new FileReader();
+    reader.onload = evt => {
+      try {
+        const parsed = JSON.parse(evt.target.result);
+        if(parsed.relationships_following && Array.isArray(parsed.relationships_following)){
+          followingData.relationships_following.push(...parsed.relationships_following);
         }
+        document.getElementById("error-message").textContent = "";
+      } catch(err){
+        console.error(err);
+        document.getElementById("error-message").textContent = "Error parsing following.json";
+      }
+    };
+    reader.readAsText(file);
+  }
+});
 
-        const followersSet = new Set();
-        followersData.forEach((data) => {
-          data.forEach((f) => {
-            if (
-              f.string_list_data &&
-              f.string_list_data[0] &&
-              f.string_list_data[0].value
-            ) {
-              followersSet.add(f.string_list_data[0].value);
-            } else {
-              console.error("Invalid follower entry:", f);
-            }
-          });
-        });
+function processFiles() {
+  if(!followersData.length || !followingData.relationships_following.length){
+    document.getElementById("error-message").textContent = "Please upload valid JSON files.";
+    return;
+  }
 
-        const followingList = [];
-        followingData.forEach((data) => {
-          data.relationships_following.forEach((f) => {
-            if (
-              f.string_list_data &&
-              f.string_list_data[0] &&
-              f.string_list_data[0].value
-            ) {
-              followingList.push({
-                username: f.string_list_data[0].value,
-                href: f.string_list_data[0].href,
-              });
-            } else {
-              console.error("Invalid following entry:", f);
-            }
-          });
-        });
+  // Ambil username followers
+  const followersSet = new Set();
+  followersData.forEach(f => {
+    if(f.string_list_data && f.string_list_data[0] && f.string_list_data[0].value){
+      followersSet.add(f.string_list_data[0].value);
+    }
+  });
 
-        const nonFollowers = followingList.filter(
-          (f) => !followersSet.has(f.username)
-        );
+  // Ambil data following
+  const followingList = [];
+  followingData.relationships_following.forEach(f => {
+    const username = f.title;
+    const href = f.string_list_data && f.string_list_data[0] ? f.string_list_data[0].href : "";
+    if(username) followingList.push({username, href});
+  });
+
+  // Filter non-followers
+  const nonFollowers = followingList.filter(f => !followersSet.has(f.username));
 
         console.log("Non-Followers:", nonFollowers);
 
