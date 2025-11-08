@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TikTok NotFollow</title>
+    <title>TikTok Unfollow Checker</title>
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.6/base.min.css"
       rel="stylesheet"
@@ -12,7 +12,7 @@
       href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css"
       rel="stylesheet"
     />
-    <link rel="icon" type="image/x-icon" href="https://syafa.tech/fav.png" />
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/xxgbrl/unfollow/main/fav.png" />
     <style>
       html,
       body {
@@ -36,7 +36,7 @@
   >
     <div class="container mx-auto p-6 flex-grow">
       <div class="flex justify-between items-center mb-4">
-        <h1 class="text-2xl font-bold mb-4">TikTok NotFollow</h1>
+        <h1 class="text-2xl font-bold mb-4">TikTok Unfollow Checker</h1>
         <button
           id="theme-toggle"
           type="button"
@@ -136,12 +136,19 @@
         class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between"
       >
         <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400"
-          >Copyright © 2024 by
+          >Copyright &copy; 2025 by
           <a
             href="https://github.com/gvoze32"
             target="_blank"
             class="font-semibold hover:underline"
             >gvoze32</a
+          >
+          &mdash; Edited by
+          <a
+            href="https://www.instagram.com/gabriel.dim"
+            target="_blank"
+            class="font-semibold hover:underline"
+            >gabriel.dim</a
           >
         </span>
         <ul
@@ -164,7 +171,7 @@
               ></path>
             </svg>
             <span
-              >Support with Ethereum:
+              >Support gvoze32 with Ethereum:
               0x98441fC52b473d2E8B246315F96701484e6353CC</span
             >
           </li>
@@ -271,66 +278,65 @@
         });
 
       function processFiles() {
-        if (!userData) {
-          document.getElementById("error-message").textContent =
-            "Invalid JSON format. Please upload a valid TikTok user data file.";
-          return;
-        }
+  if (!userData) {
+    document.getElementById("error-message").textContent =
+      "Invalid JSON format. Please upload a valid TikTok user data file.";
+    return;
+  }
 
-        const followersSet = new Set(
-          userData.Profile["Follower List"].FansList.map((f) => f.UserName)
-        );
+  // Ambil followers & following dari format JSON baru
+  const followersSet = new Set(
+    (userData["Profile And Settings"]?.Follower?.FansList || []).map(
+      (f) => f.UserName
+    )
+  );
 
-        const followingList = userData.Profile["Following List"].Following.map(
-          (f) => ({
-            username: f.UserName,
-            date: f.Date,
-          })
-        );
+  const followingList =
+    userData["Profile And Settings"]?.Following?.Following?.map((f) => ({
+      username: f.UserName,
+      date: f.Date,
+    })) || [];
 
-        const nonFollowers = followingList.filter(
-          (f) => !followersSet.has(f.username)
-        );
+  const nonFollowers = followingList.filter(
+    (f) => !followersSet.has(f.username)
+  );
 
-        console.log("Non-Followers:", nonFollowers);
+  console.log("Non-Followers:", nonFollowers);
 
-        const totalToUnfollow = nonFollowers.length;
-        document.getElementById(
-          "total-to-unfollow"
-        ).textContent = `To unfollow: ${totalToUnfollow}`;
+  const totalToUnfollow = nonFollowers.length;
+  document.getElementById(
+    "total-to-unfollow"
+  ).textContent = `To unfollow: ${totalToUnfollow}`;
 
-        const resultList = document.getElementById("resultList");
-        resultList.innerHTML = "";
-        if (nonFollowers.length === 0) {
-          resultList.innerHTML =
-            '<tr><td colspan="5" class="px-6 py-4 border-b border-gray-200 text-center bg-green-100 text-green-800">Everyone you follow follows you back.</td></tr>';
-        } else {
-          nonFollowers.forEach((user, index) => {
-            const tr = document.createElement("tr");
-            tr.className =
-              "bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600";
-            tr.innerHTML = `
-              <td class="px-6 py-4">${index + 1}</td>
-              <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">${
-                user.username
-              }</td>
-              <td class="px-6 py-4">${user.date}</td>
-              <td class="px-6 py-4">
-                <a href="https://www.tiktok.com/@${
-                  user.username
-                }" target="_blank" class="text-blue-600 hover:underline" onclick="handleLinkClick(${index})">View Profile</a>
-              </td>
-              <td class="px-6 py-4">
-                <div class="flex items-center">
-                  <input id="checkbox-${index}" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" onclick="toggleChecked(this, ${index})">
-                  <label for="checkbox-${index}" class="ml-2 text-gray-900 dark:text-gray-300">Unfollowed</label>
-                </div>
-              </td>
-            `;
-            resultList.appendChild(tr);
-          });
-        }
-      }
+  const resultList = document.getElementById("resultList");
+  resultList.innerHTML = "";
+  if (nonFollowers.length === 0) {
+    resultList.innerHTML =
+      '<tr><td colspan="5" class="px-6 py-4 border-b border-gray-200 text-center bg-green-100 text-green-800">Everyone you follow follows you back.</td></tr>';
+  } else {
+    nonFollowers.forEach((user, index) => {
+      const tr = document.createElement("tr");
+      tr.className =
+        "bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600";
+      tr.innerHTML = `
+        <td class="px-6 py-4">${index + 1}</td>
+        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">${user.username}</td>
+        <td class="px-6 py-4">${user.date}</td>
+        <td class="px-6 py-4">
+          <a href="https://www.tiktok.com/@${user.username}" target="_blank" class="text-blue-600 hover:underline" onclick="handleLinkClick(${index})">View Profile</a>
+        </td>
+        <td class="px-6 py-4">
+          <div class="flex items-center">
+            <input id="checkbox-${index}" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" onclick="toggleChecked(this, ${index})">
+            <label for="checkbox-${index}" class="ml-2 text-gray-900 dark:text-gray-300">Unfollowed</label>
+          </div>
+        </td>
+      `;
+      resultList.appendChild(tr);
+    });
+  }
+}
+
 
       function toggleChecked(checkbox, index) {
         const tr = checkbox.closest("tr");
