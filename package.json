@@ -1,0 +1,11 @@
+{
+  "name": "unfollow",
+  "private": true,
+  "scripts": {
+    "build": "tailwindcss -i ./src/input.css -o ./styles.css --minify",
+    "watch": "tailwindcss -i ./src/input.css -o ./styles.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.6"
+  }
+}
